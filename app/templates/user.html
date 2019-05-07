@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+<div class="container">
+	<div class="row">
+{% block content %}
+    <table>
+        <tr valign="top">
+           
+			<ul class="list-group">
+                <td><img src="{{ user.avatar(128) }}"></td>
+			<li class="list-group-item list-group-item-info"><h1>User Profile: {{ user.username }}</h1></li>
+            <div class="container-fluid">
+			<td>
+				
+                <li class="list-group-item list-group-item-success">{% if user.name %}<p>{{ user.name }}</p>{% endif %}</li>
+                <li class="list-group-item list-group-item-action list-group-item-danger">{% if user.gender %}<p>{{ user.gender }}</p>{% endif %}</li>
+                <li class="list-group-item list-group-item-success">{% if user.birthday %}<p>Was born on: {{ user.birthday }}</p>{% endif %}</li>
+                <li class="list-group-item list-group-item-action list-group-item-danger">{% if user.email %}<p>Contact:<br> E-mail:{{ user.email }} <br>Phone:{{ user.phone }} </p>{% endif %}</li>
+                <li class="list-group-item list-group-item-success">{% if user.about_me %}<p>About Me: <br>{{ user.about_me }}</br></p>{% endif %}</li>
+                <li class="list-group-item list-group-item-action list-group-item-danger"><p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p></li>
+                
+                <li class="list-group-item list-group-item-success">{% if user.last_seen %}<p>Last seen on: {{ moment(user.last_seen).format('LLLL') }}</p>
+                {% endif %}</li>
+                <li class="list-group-item list-group-item-info">
+				{% if user == current_user %}
+                <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                {% elif not current_user.is_following(user) %}
+                <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+                {% else %}
+                <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+                {% endif %}</li>
+            
+			</ul>
+			
+			</td>
+			</div>
+        </tr>
+    </table>
+	</div>
+</div>	
+    {% for post in posts %}
+        {% include '_post.html' %}
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer posts
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older posts <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
